@@ -183,10 +183,17 @@ const navigate = useNavigate();
 return(
 
   <button onclick={() => navigate("/Home")}> home으로 가기 </button>
-  <button onclick={() => navigate(-1)}> 뒤로가기 </button>
+  <button onclick={() => navigate(-1)}> 뒤로가기 -1 </button>
+  <button onclick={() => navigate("..")}> 뒤로가기.. </button>
   
 )
 ```
 useNavigate라는 훅(Hook)은 페이지를 이동시킬수 있는 함수를 반환을 해주는데 그 함수를 navigate로 받은 다음 매개변수를 호출해서 경로를 옮겨줄수 있습니다.    
 예) 로그인을 안했다면 로그인을 하라는 페이지로 강제로 보내버린다.
 링크 태그를 클릭 안했을 경우에도 의도적으로 페이지를 바꿔버릴수 있습니다.
+
+navigate로 받은 매개변수에 -1를 사용 하면 뒤로가는 기능을 만들수 있다고 합니다.   
+경로라서 문자열만 사용이 가능하지 않나? 라는 생각이 들어서 찾아보니 웹 브라우저에서는 사용자가 방문한 웹페이지들의 정보를 '히스토리 스택'이라는 곳에 저장을해서 순서대로 쌓여진다고 합니다. 즉 히스토리 스택에서 들어가고 싶은 델타를 전달 하라고 하는데 여기서 델타는 웹 페이지의 이동에 대한 명령이라고 합니다.    
+참조 : <https://reactrouter.com/en/main/hooks/use-navigate>    
+
+그렇다면 터미널에서 이전 폴더로 옮길때 사용하던 '..'을 사용해도 적용이 될지 궁금해서 사용해 봤는데 당연 하게도 navigate가 정상적으로 작동하는걸 확인 할수 있었습니다. 
