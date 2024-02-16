@@ -198,5 +198,50 @@ navigate로 받은 매개변수에 -1를 사용 하면 뒤로가는 기능을 �
 
 그렇다면 터미널에서 이전 폴더로 옮길때 사용하던 '..'을 사용해도 적용이 될지 궁금해서 사용해 봤는데 당연 하게도 navigate가 정상적으로 작동하는걸 확인 할수 있었습니다. 
 
-2024.02.15
+2024.02.15~16
 -
+페이지 구현 - 홈, 일기 쓰기 , 일기 수정
+
+다이어리 에디터 DiaryEditor 컴포넌트를 작성하여 페이지의 일기 쓰기, 일기 수정 기능을 구현.    
+이부분이 되게 재밌는(?) 부분 이였습니다. 이미지가 클릭되면 isSelected 값이 true 라면 클릭한 EmotionItem 의 className과 emotion_id를 실행하고 실시간으로 css를 바꿔주는 기능이 재밌는 부분이였습니다.   
+
+
+```javaScript
+const EmotionItem = ({emotion_id, emotion_img, emotion_descript, onClick, isSelected}) => {
+  return (
+    <div onClick={() => onClick(emotion_id)}
+    className={["EmotionItem", isSelected ? `EmotionItem_on_${emotion_id}`: `EmotionItem_off`,].join(" ")}>
+      <img src={emotion_img}/>
+      <span>{emotion_descript}</span>
+    </div>
+  )
+}
+
+export default EmotionItem;
+```
+
+handleSubmit 새 일기를 작성하고  작성완료 버튼을 클릭 했을 경우 실행되는 함수인데 일기를 작성한 후 일기 data에 작성한 data를 추가 해줘야 하기 때문에 App.js 컴포넌트에 있는 onCreate 함수를 실행해 줘야 합니다.
+
+이런 onCreate dispatch 함수들은 이전에 DispatchContext.proider 프로 바이더로 전체 컴포넌트 트리를 감싸줬었습니다.이로써 useContext() 훅을 사용하여  dispatchContext을 통해 onCreate 호출을 해주고 onCreate 안에 있는 date,content,emotion 값을 전달 할수 있었습니다.   
+
+
+Routes 및 Components: ( 쉬운 예시 )
+```javaScript
+<Routes> 컴포넌트 내부에는 여러 <Route> 컴포넌트가 있으며 각각이 다른 페이지 (<Home />, <New />, <Edit />, <Diary />)를 나타냅니다.
+이러한 컴포넌트들은 DiaryStateContext.Provider 및 DiaryDispatchContext.Provider에서 제공된 컨텍스트 값을 useContext 훅을 사용하여 액세스할 수 있습니다.
+```
+
+
+```javaScript
+  const {onCreate} = useContext(DiaryDispatchContext);
+
+  const handleSubmit = () => {
+    if(content.length < 1){
+      contentRef.current.focus();
+      return;
+    }else {
+      onCreate(date,content,emotion)
+      navigate('/',{replace: true})
+    }
+  }
+```
