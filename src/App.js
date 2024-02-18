@@ -44,40 +44,45 @@ const dummyData = [
     emotion:1,
     content:"오늘의 일기1번",
     date: 1707971325852,
+    expense : 5000,
   },
   {
     id:2,
     emotion:2,
     content:"오늘의 일기2번",
     date: 1707971325853,
+    expense : 500,
   },
   {
     id:3,
     emotion:3,
     content:"오늘의 일기3번",
     date: 1707971325854,
+    expense : 50,
   },
   {
     id:4,
     emotion:4,
     content:"오늘의 일기4번",
     date: 1707971325855,
+    expense : 5,
   },
   {
     id:5,
     emotion:5,
     content:"오늘의 일기5번",
     date: 1707971325856,
+    expense : 50000,
   },
 ]
 
 function App() {
 
   const [data,dispatch] = useReducer(reducer,dummyData);
-  const dataId = useRef(0);
+  const dataId = useRef(6);
 
   // CREATE
-  const onCreate = (date,content,emotion) => {
+  const onCreate = (date,content,emotion,expense) => {
     dispatch({
       type : 'CREATE',
       data: {
@@ -85,6 +90,7 @@ function App() {
         date: new Date(date).getTime(),
         content,
         emotion,
+        expense,
       },
     });
     dataId.current += 1;
@@ -94,7 +100,7 @@ function App() {
     dispatch({ type: "REMOVE", targetId });
   };
   // EDIT
-  const onEdit = (targetId, date, content, emotion) =>{
+  const onEdit = (targetId, date, content, emotion, expense) =>{
     dispatch({
       type: "EDIT",
       data: {
@@ -102,6 +108,7 @@ function App() {
         date: new Date(date).getTime(),
         content,
         emotion,
+        expense
       },
     });
   };
@@ -117,8 +124,8 @@ function App() {
       <Routes>
         <Route path='/' element={<Home />} />
         <Route path='/new' element={<New />}/>
-        <Route path='/edit' element={<Edit />}/>
-        <Route path='/diary:id' element={<Diary />}/>
+        <Route path='/edit/:id' element={<Edit />}/>
+        <Route path='/diary/:id' element={<Diary />}/>
       </Routes>
     </div>
     </BrowserRouter>
