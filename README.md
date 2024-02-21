@@ -245,3 +245,51 @@ Routes 및 Components: ( 쉬운 예시 )
     }
   }
 ```
+
+dummayData를 빈 배열로 바꾼후 localStorage로 newState를 관리 하게 마치 데이터베이스가 있는것 처럼 코드를 수정 해주었다. 하지만 강의에서 알려준대로 코드를 작성해보았지만 id값을 못찾는 에러가 발생하였다.
+```javaScript
+  function App(){
+
+  const [data,dispatch] = useReducer(reducer,[]);
+
+  useEffect(() => {
+    const localData = localStorage.getItem('diary');
+    if(localData){
+      const diaryList = JSON.parse(localData).sort((a, b) => parseInt(b.id) - parseInt(a.id));
+      dataId.current = parseInt(diaryList[0].id) + 1;
+
+      dispatch({type:"INIT",data: diaryList});
+    }
+  },[]);
+```
+
+아마 dataId 를 diaryList 에서 가장 높은 id를 사용하여 초기화 하려고 시도하고 있지만, 작업의 순서 때문에 문제가 발생한거 같아 아래와 같이 수정을 시켜주었다. localData 가있는지 확인하는 if문 안에 dataId.current 할당을 이동 시키고 또한 diaryList 가 비어 있지 않은지 확인하고 첫 번째 요소에 접근하기 전에 확인을 시켜 주었다 다행히 의도한 대로 작동이 되었다.
+```javaScript
+const [data,dispatch] = useReducer(reducer,[]);
+
+  useEffect(() => {
+    const localData = localStorage.getItem('diary');
+    if(localData){
+      const diaryList = JSON.parse(localData)
+      if(diaryList.length > 0){
+        diaryList.sort((a, b) => parseInt(b.id) - parseInt(a.id));
+        dataId.current = parseInt(diaryList[0].id) + 1;
+      }
+
+      dispatch({type:"INIT",data: diaryList});
+    }
+  },[]);
+
+```
+
+자잘한 오류 해결을 하고 아래를 통해 serve 패키지를 설치한 후에 빌드를 준비해줬다.
+```
+npm install -g serve
+```
+ 빌드 작업을 해주고 더이상 오류가 있는지 없는지 재확인을 걸쳐
+이번 프로젝트의 막바지가 다가왔다.
+```
+serve -s build
+```
+
+

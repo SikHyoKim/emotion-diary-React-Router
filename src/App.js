@@ -1,4 +1,4 @@
-import React, { useReducer, useRef } from 'react';
+import React, { useEffect, useReducer, useRef } from 'react';
 
 import './App.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
@@ -32,57 +32,35 @@ const reducer = (state,action) =>{
     default:
       return state;
   }
+
+  localStorage.setItem('diary',JSON.stringify(newState))
   return newState;
 }
 
 export const DiaryStateContext = React.createContext();
 export const DiaryDispatchContext = React.createContext();
 
-const dummyData = [
-  {
-    id:1,
-    emotion:1,
-    content:"오늘의 일기1번",
-    date: 1707971325852,
-    expense : 5000,
-  },
-  {
-    id:2,
-    emotion:2,
-    content:"오늘의 일기2번",
-    date: 1707971325853,
-    expense : 500,
-  },
-  {
-    id:3,
-    emotion:3,
-    content:"오늘의 일기3번",
-    date: 1707971325854,
-    expense : 50,
-  },
-  {
-    id:4,
-    emotion:4,
-    content:"오늘의 일기4번",
-    date: 1707971325855,
-    expense : 5,
-  },
-  {
-    id:5,
-    emotion:5,
-    content:"오늘의 일기5번",
-    date: 1707971325856,
-    expense : 50000,
-  },
-]
 
 function App() {
 
-  const [data,dispatch] = useReducer(reducer,dummyData);
-  const dataId = useRef(6);
+  const [data,dispatch] = useReducer(reducer,[]);
+
+  useEffect(() => {
+    const localData = localStorage.getItem('diary');
+    if(localData){
+      const diaryList = JSON.parse(localData)
+      if(diaryList.length > 0){
+        diaryList.sort((a, b) => parseInt(b.id) - parseInt(a.id));
+        dataId.current = parseInt(diaryList[0].id) + 1;
+      }
+      dispatch({type:"INIT",data: diaryList});
+    }
+  },[]);
+
+  const dataId = useRef(1);
 
   // CREATE
-  const onCreate = (date,content,emotion,expense) => {
+  const onCreate = (date,content,emotion) => {
     dispatch({
       type : 'CREATE',
       data: {
@@ -90,7 +68,6 @@ function App() {
         date: new Date(date).getTime(),
         content,
         emotion,
-        expense,
       },
     });
     dataId.current += 1;
@@ -100,7 +77,7 @@ function App() {
     dispatch({ type: "REMOVE", targetId });
   };
   // EDIT
-  const onEdit = (targetId, date, content, emotion, expense) =>{
+  const onEdit = (targetId, date, content, emotion) =>{
     dispatch({
       type: "EDIT",
       data: {
@@ -108,7 +85,6 @@ function App() {
         date: new Date(date).getTime(),
         content,
         emotion,
-        expense
       },
     });
   };
