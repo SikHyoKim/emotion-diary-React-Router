@@ -290,6 +290,73 @@ npm install -g serve
 이번 프로젝트의 막바지가 다가왔다.
 ```
 serve -s build
+```    
+
+Firebase
+--
+firebase 홈페이지를 들어가서 무료로 호스로 호스팅까지 하는 작업을 해보았다.
+홈페이지에 들어가서 firebase에서 알려주는 절차에 따라해 주었다.
+
+홈페이지를 열자마자 나오는 firebase 시작하기를 누른후 프로젝트 Name을 지어 주었다.
+
+firebase 에서 프로젝트가 생성되면 터미널로 돌아가서 Firebase CLI를 설치해주는 작업을 해주어야 했다.
+
+```
+npm install -g firebase-tools // 글로벌 설치
 ```
 
+글로벌로 설치한 후에 firebase가 정상적으로 설치가 되었는지 확인하기 위해 
+```
+firebase --version
+```
+위와 같은 명령어를 실행해 주었지만 무슨 일인지 
+command not found: firebase 라는 에러가 출력이 되었다.
 
+하나하나 확인해 보기 위해 일단 전역으로 설치가 되었는지부터 확인을 해주었습니다.
+```
+npm list -g | grep firebase-tools
+// |--- firebase-tools@13.3.1
+```
+
+설치는 됐지만 작동을 안해서 PATH경로 문제인가 싶어 PATH를 확인하고 경로를 수정후에도 다시 버전을 확인하는 명령어를 입력했지만 똑같은 에러가 나오게 되었습니다.
+
+이를 해결하기 위해 처음에는 터미널에서 firebase를 uninstall로 다시 지웠다가 다시 깔아보기도 하고 경로에 문제가 있었나 다시 확인을 했지만 해결되지 않아서 만능 GPT를 통해 질문을 주고 받았었지만 이미 해봤던 단계들만 나와서 다른 방법을 찾아야 했습니다. 평소 공부하며 들어가 있었던 커뮤니티에 질문을 올려 보니 한 개발자 분께서 공식문서를 한번 봐보는것도 좋을거 같다고 하셔서 찾아 보게 되었습니다.
+
+참조 
+firebase 공식 문서 :
+<https://firebase.google.com/docs/cli?hl=ko#install-cli-mac-linux>
+
+공식 문서를 살펴보니 자동 설치 스크립트를 사용하여 Firebase CLI를 설치하는 방법이 있었습니다.
+
+```
+curl -sL https://firebase.tools | bash
+```
+
+이 스크립트는 운영체제를 자동으로 감지하고 최신 Firebase CLI 릴리스를 다운로드 한 다음 디렉터리에 관계없이 사용 가능한 firebase 명령어를 사용 설정 한다고 합니다.
+
+
+
+다음 프로젝트를 할때 비슷한 에러를 피하기 위해 여기서 npm install -g firebase랑 공식문서에서 알려준 명령어랑 어떠한차이 때문에 되고 안되는지 차이점에 대해서 알아 보았습니다. 
+
+npm의 글로벌 설치 경로가 시스템 PATH에 올바르게 추가되지 않아서 발생하는 오류이고 npm의 글로벌 설치 경로가 PATH에 제대로 포함되지 않으면 해당 패키지의 실행 파일을 찾을수 없으므로 명령어를 인식 못해서 발생한 오류였고 공식문서에서 알려준 curl -sL https://firebase.tools | bash 명령어는 npm과 다르게 Firebase CLI를 설치하는 동시에 PATH에 해당 경로를 추가하여 사용자가 따로 설정할 필요가 없습니다. 
+
+만약 npm으로 설치한 Firebase CLI를 사용할 수 있도록 하려면, 다음과 같이 npm의 글로벌 설치 경로를 환경 변수에 추가해 주어야 합니다.
+```
+export PATH="$PATH:$(npm -g bin)"
+또는
+export PATH="$PATH:$(npm prefix -g)/bin"
+```
+
+경로를 추가해준 뒤에 변경 사항을 적용하기 위해 터미널에서 
+```
+source ~/.zshrc #또는 ~/.bashrc 또는 ~/.bash_profile
+```
+명령어를 본인의 셸에 맞게 사용해주면 됩니다. 
+
+에러를 해결한 뒤에 firebase에서 제공해주는 절차에 따라 
+firebase login ~ init 까지 마친뒤
+
+프로젝트 파일안에 firebase.json 파일이 생성 되고 
+json 파일의 설정도 마친뒤 npm run build를 통해 한번더 빌드를 해준후 firebase deplory 까지 해주면 호스팅이 완료 됩니다.
+
+<img width="700" alt="스크린샷 2024-02-22 오후 4 02 04" src="https://github.com/SikHyoKim/emotion-diary-React-Router/assets/141008555/a46e4748-41f5-4f64-a79f-686f2c5a206e">
